@@ -90,7 +90,7 @@ class GUI:
                     if event.key == pygame.K_RETURN:
 
                         #get label
-                        #self.save_label(6)
+                        self.save_label(9)
 
                         if self.model is not None:
 
