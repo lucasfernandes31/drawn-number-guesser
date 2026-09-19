@@ -6,7 +6,7 @@ from torchvision import transforms
 transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=1), #Convert image to grayscale (pour avoir moins de calculs, car rvb x3 calculs alors que nuances de gris un seul)
     transforms.Resize((96,96)), #Resize the image to 96x96px (complètement arbitraire, mais c'est pour harmoniser les images)
-    transforms.toTensor(), #Convert the image to tensor (objet que pytorch reconnaît)
+    transforms.ToTensor(), #Convert the image to tensor (objet que pytorch reconnaît)
     transforms.Normalize((0.5,), (0.5,)) #Normalize the image (normaliser les valeurs de la matrice)
 ])
 
