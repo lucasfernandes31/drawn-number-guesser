@@ -16,7 +16,7 @@ class GUI:
     def __init__(self, model_path=None, image_size=(96,96)):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = None
-        if model_path and os.path.exists(model_path):
+        if model_path and not os.path.exists(model_path): #attention enlever le not pour la prédiction
             self.model = Net(10).to(self.device)
             self.model.load_state_dict(torch.load(model_path, map_location=self.device))
             self.model.eval()
@@ -90,7 +90,7 @@ class GUI:
                     if event.key == pygame.K_RETURN:
 
                         #get label
-                        self.save_label(9)
+                        self.save_label(2, path='DeepLearning/testdataset/')
 
                         if self.model is not None:
 
