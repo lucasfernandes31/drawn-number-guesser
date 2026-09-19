@@ -80,15 +80,17 @@ class GUI:
                             pygame.draw.line(self.screen, WHITE, self.last_pos, pos, 10)
                         self.last_pos = pos 
 
-                elif event.type == pygame.K_SPACE:
-                    self.screen.fill(BLACK)
-
                 elif event.type == pygame.KEYDOWN:
+                    
+                    #effacer en appuyant sur espace
+                    if event.key == pygame.K_SPACE:
+                        self.screen.fill(BLACK)
+
                     #press enter
                     if event.key == pygame.K_RETURN:
 
                         #get label
-                        self.save_label(4)
+                        self.save_label(8)
 
                         if self.model is not None:
 
