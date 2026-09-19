@@ -13,11 +13,15 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 
 class GUI:
-    def __init__(self, model_path, image_size=(96,96)):
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') #j'ai pas de gpu mais comme ça si je le lance sur un autre pc je pourrais l'utiliser
-        self.model = Net(10).to(self.device)
-        self.model.load_state_dict(torch.load(model_path))
-        self.model.eval()
+    def __init__(self, model_path=None, image_size=(96,96)):
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.model = None
+        if model_path and os.path.exists(model_path):
+            self.model = Net(10).to(self.device)
+            self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+            self.model.eval()
+        else:
+            print("Aucun modèle trouvé : mode collecte d'images uniquement")
         self.transform = transforms.Compose([
             transforms.ToPILImage(),
             transforms.Grayscale(num_output_channels=1),
@@ -84,22 +88,24 @@ class GUI:
                     if event.key == pygame.K_RETURN:
 
                         #get label
-                        self.save_label(0)
+                        self.save_label(4)
 
-                        image = pygame.surfarray.array3d(self.screen)
-                        image = np.flipud(image) #Invert along Y axis
-                        image = np.rot90(image, k=-1).copy()
+                        if self.model is not None:
 
-                        image = self.transform(image).unsqueeze(0).to(self.device)
-                        with torch.no_grad():
-                            output = self.model(image)
-                            #apply softmax
-                            output = torch.softmax(output, dim=1)
-                            print(output)
-                            _, prediction = output.max(1) #pas besoin de la valeur du score max donc on l'enregistre pas dans une variable
+                            image = pygame.surfarray.array3d(self.screen)
+                            image = np.flipud(image) #Invert along Y axis
+                            image = np.rot90(image, k=-1).copy()
 
-                            print(f"Predicted Digit : {prediction.item()}")
-                            self.display_prediction(prediction.item())
+                            image = self.transform(image).unsqueeze(0).to(self.device)
+                            with torch.no_grad():
+                                output = self.model(image)
+                                #apply softmax
+                                output = torch.softmax(output, dim=1)
+                                print(output)
+                                _, prediction = output.max(1) #pas besoin de la valeur du score max donc on l'enregistre pas dans une variable
+
+                                print(f"Predicted Digit : {prediction.item()}")
+                                self.display_prediction(prediction.item())
 
                         #clear the screen
                         self.screen.fill(BLACK)
